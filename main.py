@@ -5,13 +5,14 @@ import tempfile
 from fastapi import FastAPI, HTTPException, UploadFile
 from pydantic import BaseModel
 
-from rag import ask, ingest_pdf
+from rag import ask, ingest_pdf, list_files
 
 app = FastAPI(title="PDF RAG Chatbot")
 
 
 class Question(BaseModel):
     question: str
+    source: str | None = None
 
 
 @app.get("/")
@@ -34,6 +35,11 @@ def upload(file: UploadFile):
     return {"file": file.filename, "chunks_stored": count}
 
 
+@app.get("/files")
+def files():
+    return {"files": list_files()}
+
+
 @app.post("/ask")
 def ask_question(body: Question):
-    return ask(body.question)
+    return ask(body.question, body.source)

@@ -1,8 +1,10 @@
 import os
+import time
+
 import chromadb
 from dotenv import load_dotenv
 from google import genai
-from google.genai import types
+from google.genai import errors, types
 from pypdf import PdfReader
 
 load_dotenv()
@@ -33,15 +35,24 @@ def chunk_text(text, size=800, overlap=150):
 
 
 def embed(texts, task_type):
-    """Turn a list of texts into a list of vectors (in batches)."""
+    """Turn a list of texts into a list of vectors (in batches).
+    If Gemini's free-tier limit (429) is hit, wait and try again."""
     vectors = []
     for i in range(0, len(texts), 50):
         batch = texts[i:i + 50]
-        result = client.models.embed_content(
-            model=EMBED_MODEL,
-            contents=batch,
-            config=types.EmbedContentConfig(task_type=task_type),
-        )
+        for attempt in range(5):
+            try:
+                result = client.models.embed_content(
+                    model=EMBED_MODEL,
+                    contents=batch,
+                    config=types.EmbedContentConfig(task_type=task_type),
+                )
+                break
+            except errors.ClientError as e:
+                if e.code == 429 and attempt < 4:
+                    time.sleep(30)
+                else:
+                    raise
         vectors.extend(e.values for e in result.embeddings)
     return vectors
 
@@ -68,14 +79,25 @@ SYSTEM_PROMPT = (
 )
 
 
-def ask(question, k=4):
-    """Retrieve the top-k chunks and answer from them."""
+def list_files():
+    """Names of all PDFs stored so far."""
+    data = collection.get(include=["metadatas"])
+    return sorted({m["source"] for m in data["metadatas"]})
+
+
+def ask(question, source=None, k=4):
+    """Retrieve the top-k chunks (optionally from one file only) and answer from them."""
     if collection.count() == 0:
         return {"answer": "No documents uploaded yet.", "sources": []}
 
     q_vec = embed([question], "RETRIEVAL_QUERY")[0]
-    res = collection.query(query_embeddings=[q_vec], n_results=k)
+    query = {"query_embeddings": [q_vec], "n_results": k}
+    if source:
+        query["where"] = {"source": source}
+    res = collection.query(**query)
     docs, metas = res["documents"][0], res["metadatas"][0]
+    if not docs:
+        return {"answer": "No matching content found in that file.", "sources": []}
 
     context = "\n\n".join(
         f"[{m['source']} - page {m['page']}]\n{d}" for d, m in zip(docs, metas)

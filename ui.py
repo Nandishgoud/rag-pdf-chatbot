@@ -1,7 +1,9 @@
+import os
+
 import requests
 import streamlit as st
 
-API_URL = "http://127.0.0.1:8000"
+API_URL = os.environ.get("API_URL", "http://127.0.0.1:8000")
 
 st.set_page_config(page_title="PDF Chatbot", page_icon="📄")
 st.title("📄 PDF RAG Chatbot")
@@ -34,6 +36,13 @@ with st.sidebar:
             except requests.exceptions.ConnectionError:
                 st.error("Cannot reach the API. Is uvicorn running?")
 
+    try:
+        stored = requests.get(f"{API_URL}/files", timeout=10).json()["files"]
+    except Exception:
+        stored = []
+    choice = st.selectbox("Search in", ["All files"] + stored)
+    source = None if choice == "All files" else choice
+
     if st.button("Clear chat"):
         st.session_state.messages = []
         st.rerun()
@@ -58,7 +67,7 @@ if question:
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             try:
-                r = requests.post(f"{API_URL}/ask", json={"question": question}, timeout=120)
+                r = requests.post(f"{API_URL}/ask", json={"question": question, "source": source}, timeout=120)
                 if r.ok:
                     data = r.json()
                     answer = data["answer"]
