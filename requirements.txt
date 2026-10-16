@@ -5,3 +5,5 @@ google-genai
 chromadb
 pypdf
 python-dotenv
+streamlit
+requests
