@@ -79,6 +79,23 @@ SYSTEM_PROMPT = (
 )
 
 
+def generate(prompt):
+    """Ask Gemini for the answer. If it is busy or over the limit (429/500/503), wait and retry."""
+    for attempt in range(4):
+        try:
+            response = client.models.generate_content(
+                model=CHAT_MODEL,
+                contents=prompt,
+                config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
+            )
+            return response.text
+        except errors.APIError as e:
+            if e.code in (429, 500, 503) and attempt < 3:
+                time.sleep(10 * (attempt + 1))
+            else:
+                raise
+
+
 def list_files():
     """Names of all PDFs stored so far."""
     data = collection.get(include=["metadatas"])
@@ -104,13 +121,9 @@ def ask(question, source=None, k=4):
     )
     prompt = f"Context:\n{context}\n\nQuestion: {question}"
 
-    response = client.models.generate_content(
-        model=CHAT_MODEL,
-        contents=prompt,
-        config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
-    )
+    answer = generate(prompt)
     sources = sorted({(m["source"], m["page"]) for m in metas})
     return {
-        "answer": response.text,
+        "answer": answer,
         "sources": [{"file": s, "page": p} for s, p in sources],
     }

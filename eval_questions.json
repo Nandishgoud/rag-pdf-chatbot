@@ -1,0 +1,108 @@
+[
+  {
+    "question": "What is a string in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["characters"]
+  },
+  {
+    "question": "Why are files used in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["volatile"]
+  },
+  {
+    "question": "What are the two types of files in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["text", "binary"]
+  },
+  {
+    "question": "Which function is used to open a file in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["open"]
+  },
+  {
+    "question": "Who won the 2011 cricket world cup?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "answerable": false
+  },
+  {
+    "question": "What is the price of an iPhone 15?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "answerable": false
+  },
+
+  {
+    "question": "What is a variable in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["variable", "assignment"]
+  },
+  {
+    "question": "What are the different data types in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["data types", "int", "str", "float", "bool"]
+  },
+  {
+    "question": "What is the difference between a list and a tuple in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["list", "tuple", "mutable", "immutable"]
+  },
+  {
+    "question": "What is a dictionary in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["dictionary", "key-value pairs"]
+  },
+  {
+    "question": "What is a set in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["set", "unique elements"]
+  },
+  {
+    "question": "What is the difference between == and = in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["operators", "comparison", "assignment"]
+  },
+  {
+    "question": "How does an if-else statement work in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["if", "else", "conditional statements"]
+  },
+  {
+    "question": "What is the difference between a for loop and a while loop?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["for loop", "while loop", "iteration"]
+  },
+  {
+    "question": "What is a function in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["function", "def", "reusability"]
+  },
+  {
+    "question": "What is recursion in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["recursion", "base case", "function"]
+  },
+  {
+    "question": "How do you read a file in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["file handling", "read", "open"]
+  },
+  {
+    "question": "What is object-oriented programming in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["OOP", "class", "object"]
+  },
+  {
+    "question": "What is inheritance in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["inheritance", "parent class", "child class"]
+  },
+  {
+    "question": "What is exception handling in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["exceptions", "try", "except"]
+  },
+  {
+    "question": "What is a lambda function in Python?",
+    "source": "The Ultimate Python Handbook.pdf",
+    "keywords": ["lambda", "anonymous function"]
+  }
+]
