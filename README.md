@@ -4,12 +4,18 @@ A chatbot that answers questions from your own PDF files. Answers come only from
 
 ![Demo](screenshots/demo.png)
 
+**Live demo:** https://YOUR-APP-LINK.streamlit.app
+
+This is a public demo. Uploaded files are shared with all visitors, so please do not upload private documents.
+
 ## Features
 - Upload one or more PDFs
 - Ask questions in a chat page
 - Answers are based only on the document text, with sources (file and page)
 - Pick one file to search in, or search all files
+- Retries automatically when Gemini is busy or over its rate limit
 - Runs with Docker, or directly with Python
+- Includes a small evaluation script (see Evaluation below)
 
 ## Tech stack
 - Python
@@ -18,6 +24,7 @@ A chatbot that answers questions from your own PDF files. Answers come only from
 - Gemini API (embeddings and answers)
 - ChromaDB (vector database)
 - Docker and Docker Compose
+- Streamlit Community Cloud (live deployment)
 
 ## How it works
 1. **Upload:** the PDF text is split into chunks of 800 characters, with a 150 character overlap.
@@ -39,6 +46,8 @@ A chatbot that answers questions from your own PDF files. Answers come only from
 4. Open http://localhost:8501
 
 The API runs on http://localhost:8000 (docs at `/docs`).
+
+`streamlit_app.py` is a single-file version of the chat page that calls `rag.py` directly. It is what runs on Streamlit Community Cloud.
 
 ## Run without Docker
 ```
@@ -63,7 +72,30 @@ streamlit run ui.py
 - `rag.py`: PDF reading, chunking, embeddings, search and answer
 - `main.py`: FastAPI endpoints
 - `ui.py`: Streamlit chat page
+- `streamlit_app.py`: single-file chat page used for the live deployment
+- `evals.py` and `eval_questions.json`: evaluation script and test questions
 - `Dockerfile` and `docker-compose.yml`: container setup
+
+## Evaluation
+`evals.py` asks the chatbot every question in `eval_questions.json` (questions about The Ultimate Python Handbook) and checks the answers:
+- **Questions in the PDF:** the answer must contain all the keywords listed for that question.
+- **Questions not in the PDF:** the bot must say it could not find the answer.
+- Results for each question are saved to `eval_results.csv`.
+
+To run it, upload the handbook to the app locally first, then:
+```
+python evals.py
+```
+
+Results from my last run:
+
+| Check | Result |
+|-------|--------|
+| Questions in the PDF answered correctly | X of Y |
+| Questions not in the PDF handled correctly | X of Y |
+| Overall | X of Y |
+
+Keyword matching is a simple check. A correct answer written with different words can be marked wrong, so the score can be lower than the real quality.
 
 ## Limitations
 - It reads only the 4 most similar chunks per question, so it cannot answer questions that need the whole document, such as counting how many times a word appears.
